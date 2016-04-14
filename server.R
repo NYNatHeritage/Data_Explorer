@@ -104,13 +104,23 @@ shinyServer<-function(input,output){
         #setnames(subset_res,c("HUC12","Name","County","HUC6","Ecological Stress","Ecological Health","Comprehensive",paste(input$Z_axis_Category)))
         subset_res<-res[,c("HUC12","Name","County","HUC6",input$X_axis_Category,input$Y_axis_Category,input$Z_axis_Category,"Norm_BAP_Score","Norm_Brook_Trout","Norm_Canopy_Riparian","Norm_Canopy_Watershed","Norm_Floodplain_Comp_Watershed","Norm_Floodplain_Complex_Rip","Norm_Functional_River_Network","Norm_Matrix_Forest_Block_Rip","Norm_Matrix_Forest_Block_Wtrshd","Norm_Natural_Area_Riparian","Norm_Natural_Area_Watershed","Norm_Rare_Taxa","Norm_Dam_Storage_Ratio","Norm_Erosion_Index","Norm_Impervious_Surface","Norm_LCA_Riparian","Norm_LCA_Watershed","Norm_TWI","Norm_Water_Quality_Score","Norm_Ecological_Health","Norm_Ecological_Stress","Norm_Comprehensive_Score" )]
         setnames(subset_res,c("HUC12","Name_of_HUC12_subwatershed","County","HUC6",input$X_axis_Category,input$Y_axis_Category,input$Z_axis_Category,"BAP HEALTH","Brook_Trout HEALTH","Canopy Riparian HEALTH","Canopy Watershed HEALTH","Floodplain_Complex_Watershed HEALTH","Floodplain_Complex_Rip HEALTH","Functional_River_Network HEALTH","Matrix_Forest_Block_Rip HEALTH","Matrix_Forest_Block_Wtrshd HEALTH","Natural_Riparian HEALTH","Natural_Watershed HEALTH","Rare_Taxa HEALTH","Dam_Storage_Ratio STRESS","Erosion_Index STRESS","Impervious_Surface STRESS","LCA_Riparian STRESS","LCA_Watershed STRESS","TWI STRESS","Water_Quality_Score STRESS","Ecological Health","Ecological Stress","Comprehensive Score" ))
-        datatable(subset_res, rownames=FALSE,options = list(searching=FALSE,lengthChange=FALSE,scrollX=TRUE,scrollY='200px',scrollCollapse=TRUE,paging=FALSE,rowCallback= DT::JS(
-            paste0('function(row,data){
-                //Bold cells for those >=5 in the first column
-                if (data[0] == "',clicked_hucs()$HUC12,'")
-                    $("td",row).css("background","red");
-            }')
-        )))
+        datatable(subset_res,
+            rownames=FALSE,
+            options = list(searching=FALSE,
+                lengthChange=FALSE,
+                scrollX=TRUE,
+                scrollY='200px',
+                scrollCollapse=TRUE,
+                paging=FALSE,rowCallback= DT::JS(
+                    paste0('function(row,data) {
+                        //Bold cells for those >=5 in the first column
+                        if (data[0] == "',clicked_hucs()$HUC12,'")
+                            $("td",row).css("background","red");
+                        }'
+                    )
+                )
+            )
+        )
     })
 
     output$brush_info<-renderPrint({
@@ -159,7 +169,7 @@ shinyServer<-function(input,output){
 
     })
 
-})
+}
 
 ##END SHINY APP CODE
 
