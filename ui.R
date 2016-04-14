@@ -17,3 +17,4 @@ shinyUI<-navbarPage("Trees for Tribs Great Lakes Data Explorer",
     ),
     tabPanel("Critical Locations")
 )
+
