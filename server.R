@@ -1,5 +1,5 @@
 ##Step 1- Load Libraries####
-
+library(rintrojs)
 library(shiny)
 library(ggplot2)
 library(data.table)
@@ -14,7 +14,79 @@ library(tools)
 library(shinycssloaders)
 library(plotly)
 
-shinyServer<-function(input,output){
+server<-function(input,output,session){
+  
+  
+  #Intro Action Button----
+  
+  steps <- reactive(data.frame(
+    #         1     2        3              4         5         6               7         8            9            10          11          12                                           13             14         15       16           17              18                                       19                                       20                                        21            22            23        24          25      26           27         28         29          30         31                 32             33           34            35           36      
+    element=c(NA,"#tabs","#plotuiui","#plotuiui","#plotuiui", "#map_plot","#Region","#centerpane","#plotuiui","#map_plot","#map_plot","#Subwatershed_symbology + .selectize-control","#map_plot","#map_plot","#map_plot","#centerpane","#plotcontrols","#X_axis_Category + .selectize-control","#Y_axis_Category + .selectize-control","#Z_axis_Category + .selectize-control","#centerpane","#centerpane","#centerpane","#centerpane",NA,"#dashboard","#hplotui","#splotui","#table_ui","#tabs","#catch_headings","#catch_map","#catch_plotui","#catch_controls","#AGOLbutton","#tabs"),
+    intro=c("<p style=text-align:center><img src=http://www.dec.ny.gov/images/wildlife_images/nynhplogo.gif /></p><p><h2><font color=firebrick>Welcome</font> to the <strong>Data Explorer!</strong></h2> <p><font size=2> A product of the New York Natural Heritage program.</font></p><h3> Use this tool to identify areas of highest priority for riparian restoration or protection projects.</h3><p><font size=1>Completed as a part of the <a href=http://www.nynhp.org/treesfortribsny>New York Riparian Opportunity Assessment</a>. This project was made possible by New York&#8217;s Trees for Tribs program, a program of the New York State Department of Environmental Conservation&#8217;s Division of Lands and Forests, with funding from the New York State Environmental Protection Fund.</font>",
+            "<strong> <font face=verdana>Tab: Subwatersheds </strong></font> <br>We are currently looking at the <strong>Subwatersheds</strong> tab. This is a natural place to start exploring environmental condition at the level of the subwatershed (HUC 12) across New York State.",
+            "<strong> <font face=verdana>Feature: Bubble Plot </strong></font> <br>This is the <strong> bubble plot</strong>.  Every <strong>point</strong> on the plot represents a single <strong>subwatershed</strong>.<p>It displays how subwatersheds are ranked relative to each other according to the scores of two <strong>ecological indicators</strong>.", 
+            "<strong> <font face=verdana>Feature: Bubble Plot X Axis </strong></font> <br>The plot is divided into quadrants by two dashed lines. <br>The <strong>dashed vertical line</strong> indicates the average value of the indicator on the x axis. When the page first loads, it will be the average <strong><font color=firebrick>Ecological Stress</strong></font> score. Points to the <strong>left</strong> of this line indicate subwatersheds that have <strong>lower stress</strong> than average. Points to the <strong>right</strong> of this line indicate subwatersheds that are <strong>more stressed</strong than average.",
+            "<strong> <font face=verdana>Feature: Bubble Plot Y Axis </strong></font> <br>The <strong>horizontal dashed line</strong> indicates the average value of the indicator on the y axis. When the page first loads, it will be the <strong><font color=green>Ecological Health</strong></font> score. Points falling <strong>above</strong> this line have <strong>higher</strong> ecological health scores than average, points falling <strong>below</strong> this line have <strong>lower</strong>  ecological health scores than average. <p><font size=2><em>The positions of the lines will automatically adjust to reflect the average scores of the selected region.</font></em>",
+            
+            "<strong> <font face=verdana>Feature: Map </strong></font> <br>The <strong>map</strong> shows the boundaries of all of New York's 1662 subwatersheds (HUC12s). Use the +/- controls in the upper left to zoom in and out. Choose preferred basemap using the radio buttons in the upper right.",
+            "<strong> <font face=verdana>Feature Control: Region Selector </strong></font> <br>To focus on an area of interest, select a <strong>region</strong> from the drop down menu.<br><em><strong><font color=firebrick>Try This:</font></strong> Select the Upper Delaware region</em>",
+            "<strong> <font face=verdana>Feature Control: Region Selector </strong></font> <br>The <strong>bubble plot</strong> and <strong>map</strong> are now zoomed and focused on only those subwatersheds in the selected <strong>region.</strong>",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br>To select points,click and drag over them on the bubble plot.<br><em><strong><font color=firebrick>Try This:</font></strong> Click and drag to select all the points that are <strong>above</strong> the horizontal line and to the <strong>left</strong> of the vertical line.",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br>The locations of subwatersheds selected in the <strong>bubble plot</strong> are added to the <em><font color=fuchsia>'Selected'</em></font> layer of the <strong>map</strong> and outlined in <font color=fuchsia>pink</font>.",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br>This example selected subwatersheds with low <font color=firebrick>Ecological Stress</font> scores and high <font color=green>Ecologial Health</font> scores. <p>Subwatersheds meeting both these criteria have the highest overall Comprehensive scores, which is reflected in their <font color=blue>bluer</font> <strong>Comprehensive Score</strong> colors on the map.",
+            "<strong> <font face=verdana>Feature Control: Map Symbology </strong></font> <br>The Map Symbology menu controls which ecological indicator the map displays.<p><em><strong><font color=firebrick>Try This:</font></strong> Change the colors by using the Map Symbology drop down menu to select 'H9: Native Fish Richness'.",
+            "<strong> <font face=verdana>Feature Control: Map Symbology </strong></font> <br><em>The colors have now changed to reflect the Native Fish Richness Score of each subwatershed.</em> ",
+            "<strong> <font face=verdana>Feature Control: Map Layers </strong></font> <br><p> Turn a <strong>layer</strong> on or off by clicking on the box next to the layer name in the upper right corner of the map.<p><em><strong><font color=firebrick>Try This:</font></strong> Click once on the box next to <font color=fuchsia>'Selected'</font> to turn it off. Click the box again to make the layer reappear.",
+            "<strong> <font face=verdana>Feature Control: Clicked Subwatersheds </strong></font> <br>To better understand a single subwatershed of interest, click on it on the <strong>map.</strong><p><em><strong><font color=firebrick>Try This:</font></strong> Click on one of the <font color=fuchsia>'Selected'</font> subwatersheds with a high Native Fish Richness score (darker green).</em>",
+            
+            #"<strong> <font face=verdana>Feature Control: Clicked Subwatersheds </strong></font> <br>When a subwatershed is clicked it is added to the <em>'Clicked'</em> layer on the <strong>map</strong> and outlined in a <strong>dashed black line</strong>.The <em>'Clicked'</em> layer only contains a single subwatershed, the most recently clicked.",
+            "<strong> <font face=verdana>Feature Control: Clicked Subwatersheds </strong></font> <br>On the <strong>map</strong> the 'Clicked' subwatershed is now outlined in a <strong>dashed bold line</strong>.<p>On the <strong>bubble plot</strong> it is <strong> highlighted</strong> with a black circle .<p><em><strong><font color=firebrick>Try This:</font></strong> Click on a few subwatersheds on the <strong>map</strong> and see how the position of the <strong>black circle</strong> changes to show where each ranks on the <strong>bubble plot</strong>",
+            "<strong> <font face=verdana>Feature Control: X and Y Axis Category </strong></font> <br>The information displayed in the bubble plot can be adjusted by choosing new indicators for the X and Y axis categories from the dropdown menus.",
+            "<strong> <font face=verdana>Feature Control: X and Y Axis Category </strong></font> <br><em><strong><font color=firebrick>Try This:</font></strong> From the <strong>X axis Category menu</strong> select 'Comprehensive' </em>.<br> Because the <em>'Comprehensive'</em> score includes all Health and Stress indicators, using it to define the X axis will rank subwatersheds in the order of their <strong>overall condition</strong> from <strong>poorest</strong> on the left to <strong>best</strong> on the right. ",
+            "<strong> <font face=verdana>Feature Control: X and Y Axis Category </strong></font> <br><em><strong><font color=firebrick>Try This:</font></strong> From the <strong>Y axis Category menu</strong> select 'H9: Native Fish Richness'</em>. <br>This will rank subwatersheds from <strong>highest</strong> Native Fish Richness at the top of the plot, to <strong>lowest</strong> at the bottom.",
+            "<strong> <font face=verdana>Feature Control: Point Size/Color  Menu </strong></font> <br><em><strong><font color=firebrick>Try This:</font></strong> From the <strong>Point Size/Color menu</strong> select 'Resilience'</em>. <br>Changing the category in the Point Size/Color menu adjusts the <strong>size and color</strong> of each point.<p> In this example, <strong>more resilient</strong> subwatersheds will have <strong>larger and bluer</strong> points, while <strong>less resilient</strong> subwatersheds will be <strong>smaller and redder</strong>. <p>Adjusting the size of the points to reflect a third category can be useful when <strong>trying to decide between subwatersheds with otherwise similar ranks</strong>.",
+            
+            "<strong> <font face=verdana>Feature Control: X and Y Axis Category </strong></font> <p>Notice that even though the categories have changed and the points rearranged/resized, the <strong>black circle</strong> on the <strong>bubble plot</strong> still highlights the position of the Clicked subwatershed.",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br>With these new category settings it is easy quickly single out the highest (or lowest) scoring subwatersheds for a given indicator.<br><em><strong><font color=firebrick>Try This:</font></strong> Click and drag on the plot to select the subwatersheds with the highest score for Native Fish Richness (the points in the top most section of the plot).<em>",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br>The subwatersheds now highlighted would be of high priority for a project aimed at <strong>supporting native fish</strong>. We can roughly estimate from a point's <strong>position on the plot</strong> what type of conservation action might be most appropriate.",
+            "<strong> <font face=verdana>Feature Control: Selected Points </strong></font> <br><strong>Protection:</strong> On the <strong>bubble plot</strong> drag the left edge of the highlight box to the edge of the dashed vertical line to highlight those subwatersheds with high native fish richness and good overall condition. These may be good candidates for protection.<br> <strong> Restoration:</strong> Selecting points on the opposite side of the plot, between the left edge and the dashed vertical line, highlights area with high native fish richness and poor overall environmental condition. These could be good targets for restoration, to improve conditions for the valuable resources that occur there by ameliorating existing sources of ecological stress.",
+            "After using the map and the bubble plot to narrow down your choice of subwatersheds, you can see an overview of the habitat within each subwatershed individually using the <strong>Dashboard</strong> below.",
+            "<strong> <font face=verdana>Feature: Dashboard </strong></font> <br>The <strong>Dashboard</strong> displays all of a subwatershed's <strong>Health and Stress indicator scores</strong>.",
+            "<strong> <font face=verdana>Feature: Dashboard </strong></font> <br>The <strong>name</strong> of the subwatershed is displayed at the top. The <strong>length</strong> of each bar represents the <strong>score</strong> for that indicator. For some indicators where the value is 0, the bar will be absent.",
+            "<strong> <font face=verdana>Feature: Dashboard </strong></font> <br>For reference, the <strong>statewide average</strong> for each indicator is always displayed as a <strong>small vertical line</strong>. If a bar extends to the <strong>right</strong> of that line, the subwatershed scored <strong>higher</strong> than average. If the bar <strong>stops before it reaches that line</strong>, the subwatershed scored <strong>below</strong> average. <p><font size=2>The whiskers to the right and left of the vertical line represent the statewide standard deviation.</font>",
+            #"<strong> <font face=verdana>Feature: Dashboard </strong></font> <br>Reviewing the Health and Stress Dashboard is a good way to get ideas about what problems might need to to be alleviated or which resources could benefit from protection in a subwatershed.",
+            "<strong> <font face=verdana>Feature: Data Table </strong></font> <br>To view all scores for any point selected in the plot, scroll down to the <strong>Data Table</strong>",
+            
+            "<strong> <font face=verdana>Tab: Catchments </strong></font> <br>Now that we have used the <strong> Subwatershed Tab</strong> to hone in on subwatershed of interest,<strong><font color=firebrick>click</font></strong> on the <strong> Catchments Tab</strong> to explore how habitat varies within that subwatershed. ",
+            "<strong> <font face=verdana>Tab: Catchments </strong></font> <br>The <strong>Catchments</strong> tab automatically displays scores, at the catchment level, for the selected subwatershed, whose name and HUC 12 number are displayed at the top.<br><em>To select a subwatershed, click on it on the <strong>map</strong> in the Subwatersheds tab, or directly enter its 12 digit HUC ID number into the <strong>search box</strong> on the Catchment tab.</em> ",
+            
+            "<strong> <font face=verdana>Feature: Map </strong></font> <br>The catchments are displayed for only one subwatershed at a time. Catchment scores represent <strong>percentiles</strong>.They are ranked only relative to the other catchments in the subwatershed.<p>The catchment map has the same controls and features as the map on the previous tab.",
+            "<strong> <font face=verdana>Feature: Plot </strong></font> <br>Points in the bubble plot represent the scores of catchments within the subwatershed.<br> The controls for the Catchment plot are the same as those on the previous tab.",
+            "<strong> <font face=verdana>Feature Control: New Themes </strong></font> <br>On the Catchment tab, it is also possible to visualize data in the <strong>map</strong> and <strong>bubble plot</strong> using the <strong>Theme Scores</strong>, which are not available on the Subwatersheds tab.They are listed below the 'Overall' Scores in the dropdown menus.",
+            "<strong> <font face=verdana>Feature: Shortcut to ArcGIS Online Map </strong></font> <br>There is <strong>additional information available</strong> about catchments that is more easily viewed using our <strong>online map service</strong>, including <strong>filters</strong> to focus on Agricultural/Urban/Public Lands, details on <strong>sources</strong> of water stress, water classification,etc.<p>Clicking on the <strong>'Open in ArcGIS Online' button</strong> will open the online map in a new window, and then zoom to the subwatershed selected.",
+            
+            "<strong> <font face=verdana>Tab: Definitions </strong></font> <br> To find more information on how a <strong>Theme</strong> or any indicator was calculated,<strong><font color=firebrick>click</font></strong> on the <strong>Definitions Tab</strong> to view a searchable table with descriptions, reasoning, and calculation methods for all indicators."
+            
+    ),
+    #     1        2        3     4         5      6     7    8        9       10     11  12-MSym   13      14      15     16    17      18     19   20      21     22  23_a  24_b  25_c   D_26   27    28      29        30                  31     32       33    34       35    36
+    position=c("bottom","bottom","top", "bottom","right","top","left","top","bottom","left","left","top","bottom","left","left","bottom","top","top","top","top","bottom","top","top","top","auto","top","top","auto","top","bottom-middle-aligned","right","right","left","top","bottom","bottom-middle-aligned")
+  ))
+  observeEvent(input$help, { introjs(session, options=list("skipLabel"="End Tour","doneLabel"="Tour is Complete. Click to Exit","exitOnOverlayClick"=FALSE,"hidePrev"=TRUE,"hideNext"=TRUE,steps=steps())) })
+  
+  #Indicator Tab----
+  
+  output$indicator_table<-DT::renderDataTable({
+    dindc<-as.data.frame(attributes)
+    #DT::datatable(dindc,rownames = FALSE) %>%
+    datatable(dindc,options=list(paging = FALSE,columnDefs = list(list(targets = 1, visible = FALSE))),rownames=FALSE) %>% 
+      formatStyle(c('Indicator','Code','Category'),fontWeight="bold") %>%
+      formatStyle(c('Indicator','Code','Category'),'Category',
+                  
+                  backgroundColor = styleEqual(c("Health",'Stress','Resilience','Community','Themes',NA),c('PaleGreen','IndianRed','CornflowerBlue','Pink','MediumAquaMarine','White'))
+      )
+  })
+  
+  
   #Subwatersheds Setup----
   #Reactive means/ranges for ggplot-subwatershed----
   sample_scores<-reactive({
@@ -245,7 +317,7 @@ shinyServer<-function(input,output){
       setView(lat=42.94794,lng=-75.57487,zoom=6) %>%
       addLayersControl(
         baseGroups=c("Imagery","OpenStreetMap"),
-        overlayGroups=c("Clicked","Brushed","Subwatershed"),
+        overlayGroups=c("Clicked","Selected","Subwatershed"),
         position=c("topright"),
         options=layersControlOptions(collapsed=FALSE))
     states
@@ -361,7 +433,7 @@ shinyServer<-function(input,output){
     if (is.null(brush_pnts())){
       proxy<-leafletProxy("map_plot")
       proxy %>%
-        clearGroup("Brushed")
+        clearGroup("Selected")
     }
     if (!is.null(brush_pnts())){
       
@@ -371,8 +443,8 @@ shinyServer<-function(input,output){
       highlight_subs<-state_mapData[highlight_mask,]
       proxy<-leafletProxy("map_plot")
       proxy %>%
-        clearGroup("Brushed") %>%
-        addPolygons(data=highlight_subs, stroke=TRUE,color="Magenta",opacity=.8,weight = 3,fillOpacity=0,highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=FALSE),layerId=highlight_subs@data$HUC12,label=~as.character(highlight_subs@data$HUC_12_Nam),group="Brushed" )
+        clearGroup("Selected") %>%
+        addPolygons(data=highlight_subs, stroke=TRUE,color="Magenta",opacity=.8,weight = 3,fillOpacity=0,highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=FALSE),layerId=highlight_subs@data$HUC12,label=~as.character(highlight_subs@data$HUC_12_Nam),group="Selected" )
     }
     
   })
@@ -403,9 +475,10 @@ shinyServer<-function(input,output){
   observeEvent(input$map_plot_shape_click,{ 
     get_huc_click<-sub_map_val$clck_pnt
     if (is.null(get_huc_click))return()
+    #if (is.element(get_huc_click,no_catch_ids))return()#
     else{
       huc_id<-as.vector(get_huc_click)
-      if(length(hucids[grep(get_huc_click,hucids)])>0){
+      if(length(s_hucids[grep(get_huc_click,s_hucids)])>0){
         target_huc_data$Clicks<-c(target_huc_data$Clicks,huc_id)
       }
     }
@@ -430,7 +503,7 @@ shinyServer<-function(input,output){
       setView(lat=42.94794,lng=-75.57487,zoom=6) %>%
       addLayersControl(
         baseGroups=c("Imagery","OpenStreetMap"),
-        overlayGroups=c("Clicked","Brushed","Catchments"),
+        overlayGroups=c("Clicked","Selected","Catchments"),
         position=c("topleft"),
         options=layersControlOptions(collapsed=FALSE))
     
@@ -442,6 +515,7 @@ shinyServer<-function(input,output){
   observeEvent({input$tabs
     input$map_plot_shape_click
   },{
+    if (is.element(input$map_plot_shape_click$id,no_catch_ids))return()           
     huc_id<-as.vector(latest_huc())
     gobbledeygook<-hucids[grep(huc_id,hucids)]
     if (length(gobbledeygook)==0)return ()
@@ -460,7 +534,7 @@ shinyServer<-function(input,output){
     proxy %>%
       clearControls() %>%
       clearGroup("Catchments") %>%
-      clearGroup("Brushed") %>%
+      clearGroup("Selected") %>%
       clearGroup("Clicked") %>%
       addPolygons(data=catch_view,stroke=TRUE,color="Black",weight = 1,smoothFactor=0.5,opacity=1.0,fillOpacity=0.4,fillColor=~pal(catch_view@data[,symbol_holder]),highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=TRUE),layerId=catch_view@data$FEATUREID,label=~as.character(catch_view@data$FEATUREID),group="Catchments") %>%
       setView(lat=mean(long_and_lat$lat),lng=mean(long_and_lat$long),zoom=max(current_zoom,initial_zoom)) %>%
@@ -586,7 +660,7 @@ shinyServer<-function(input,output){
         long_and_lat<-catch_view %>% fortify() %>% select(long,lat)
         proxy %>%
           clearGroup("Catchments") %>%
-          clearGroup("Brushed")%>%
+          clearGroup("Selected")%>%
           clearControls() %>%
           setView(lat=mean(long_and_lat$lat),lng=mean(long_and_lat$long),zoom=zoom_level) %>%
           addPolygons(data=catch_view,stroke=TRUE,color="Black",weight = 1,smoothFactor=0.5,opacity=1.0,fillOpacity=0.4,fillColor=~pal(catch_view@data[,symbol_holder]),highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=TRUE),layerId=catch_view@data$FEATUREID,label=~as.character(catch_view@data$FEATUREID),group="Catchments") %>%
@@ -683,7 +757,7 @@ shinyServer<-function(input,output){
     if (is.null(cpnts_brush())){
       proxy<-leafletProxy("catch_map")
       proxy %>%
-        clearGroup("Brushed")
+        clearGroup("Selected")
     }
     if (!is.null(cpnts_brush())){
       
@@ -693,8 +767,8 @@ shinyServer<-function(input,output){
       highlight_catch<-catchmentData[highlight_mask,]
       proxy<-leafletProxy("catch_map")
       proxy %>%
-        clearGroup("Brushed") %>%
-        addPolygons(data=highlight_catch, stroke=TRUE,color="Magenta",opacity=.8,weight = 3,fillOpacity=0,highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=FALSE),layerId=highlight_catch@data$FEATUREID,label=~as.character(highlight_catch@data$FEATUREID),group="Brushed" )
+        clearGroup("Selected") %>%
+        addPolygons(data=highlight_catch, stroke=TRUE,color="Magenta",opacity=.8,weight = 3,fillOpacity=0,highlightOptions=highlightOptions(color="white",weight=2,fillOpacity=0,bringToFront=FALSE),layerId=highlight_catch@data$FEATUREID,label=~as.character(highlight_catch@data$FEATUREID),group="Selected" )
     }
     
   })
@@ -728,6 +802,5 @@ shinyServer<-function(input,output){
     )
   })
   
-  }
-
+}
 ##END SHINY APP CODE
