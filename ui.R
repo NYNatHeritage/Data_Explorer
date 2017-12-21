@@ -1,3 +1,7 @@
+library(rintrojs)
+library(shinycssloaders)
+library(leaflet)
+
 ui<-tagList(
   introjsUI(),
   navbarPage(title="Trees for Tribs Statewide Data Explorer",id="tabs", 
