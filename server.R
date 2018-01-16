@@ -76,7 +76,7 @@ server<-function(input,output,session){
   #Indicator Tab----
   
   output$indicator_table<-DT::renderDataTable({
-    dindc<-as.data.frame(attributes)
+    dindc<-as.data.frame(attributes[,c(3,1,2,4,5,6,7)])
     #DT::datatable(dindc,rownames = FALSE) %>%
     datatable(dindc,options=list(paging = FALSE,columnDefs = list(list(targets = 1, visible = FALSE))),rownames=FALSE) %>% 
       formatStyle(c('Indicator','Code','Category'),fontWeight="bold") %>%
