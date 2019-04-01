@@ -4,8 +4,8 @@ library(leaflet)
 
 ui<-tagList(
   introjsUI(),
-  navbarPage(title="Trees for Tribs Statewide Data Explorer",id="tabs", 
-             
+  navbarPage(title="Trees for Tribs Statewide Data Explorer",id="tabs",
+
              tabPanel("Subwatersheds",value=NULL,
                       #absolutePanel(top=20,right=20,width=200,height=30,draggable=TRUE,verbatimTextOutput("test_text"),style="opacity: 0.92"),
                       ##User Interface Code
@@ -13,12 +13,12 @@ ui<-tagList(
                         column(6,h3(textOutput("subheadingID")),actionButton("help", "Take a Tour")),column(6,selectInput("Region",label="Select a Region",c("All"="",state_regions),selectize=FALSE,selected=NULL,width="100%"),align="left")
                       ),
                       div(id="centerpane",
-                          fluidRow(  
+                          fluidRow(
                             column(6,uiOutput("plotuiui")),column(6,withSpinner(leafletOutput("map_plot",height=500)))
                             #column(12,verbatimTextOutput("test_text")),
                           ),
                           fluidRow(
-                            
+
                             div(id="plotcontrols",
                                 column(2,selectInput("X_axis_Category",label="X axis Category",choices=list('Overall'=sub_overall,'Health'=sub_health,'Stress'=sub_stress,'Resilience'=sub_res),selected="S0")#,
                                        #bsPopover("X_axis_Category", "For information on indicator scores, click on the 'About' tab.",
@@ -27,25 +27,25 @@ ui<-tagList(
                                 column(2,selectInput("Y_axis_Category",label="Y axis Category",choices=list('Overall'=sub_overall,'Health'=sub_health,'Stress'=sub_stress,'Resilience'=sub_res),selected="H0")),
                                 column(2,selectInput("Z_axis_Category",label="Point Size/Color",choices=list('Overall'=sub_overall,'Health'=sub_health,'Stress'=sub_stress,'Resilience'=sub_res),selected="COMP"))
                             ),
-                            
-                            
+
+
                             column(6,selectInput("Subwatershed_symbology",label="Map Symbology",choices=list('Overall'=sub_overall,'Health'=sub_health,'Stress'=sub_stress,'Resilience'=sub_res),selected="COMP",selectize=TRUE,width="100%"))
                           )
                       ),
                       fluidRow(
-                        
+
                         div(id="dashboard",
                             column(6,uiOutput("hplotui"),style='padding:0px;'),column(6,uiOutput("splotui"),style='padding:0px;')
                             #column(12,verbatimTextOutput("test_text")),
                         )
-                        
+
                       ),
-                      
+
                       fluidRow(
                         wellPanel(id="wellPanel",style="overflow-y:scroll",h4("Subwatersheds/HUC12 Selected"),uiOutput("table_ui"))
                         #tags$head(tags$style("#table_ui{height: 90vh; overflow-y: auto;}"))
                       )
-                      
+
              ),
              tabPanel("Catchments",value="Tab_1",
                       ##User Interface Code
@@ -66,25 +66,25 @@ ui<-tagList(
                               column(3,selectInput("Z_axis_Category_c",label="Point Size/Color",list('Overall'=comp_val,'Themes'=themes_val,'Health'=health_val,'Stress'=stress_val,'Resilience'=res_val),selected="COMP"))
                           )
                       )
-                      
+
              ),
-             
+
              tabPanel("Definitions",value="Tab_2",
                       div(id="indicator_heading",
-                          
+
                           fluidRow(
-                            
+
                             column(12,h3("Description of Indicators"))
                           )
                       ),
-                      
+
                       DT::dataTableOutput('indicator_table')
-                      
-                      
-                      
-                      
+
+
+
+
              )
   )
-  
+
 )
 
