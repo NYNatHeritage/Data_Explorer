@@ -111,7 +111,7 @@ server<-function(input,output,session){
   })
 
   #Record Click ID SUb
-  observeEvent(input$map_plot_shape_click,{
+  observeEvent(input$map_plot_shape_click, priority = 0, {
     if ({substring(input$map_plot_shape_click$id,1,4)!="HUC_"}){
       raw<-substr(input$map_plot_shape_click$id,(nchar(input$map_plot_shape_click$id)+1)-12,nchar(input$map_plot_shape_click$id))
       sub_map_val$clck_pnt<-paste0("HUC_",raw)
@@ -122,7 +122,7 @@ server<-function(input,output,session){
   })
 
   #Delete Click ID on basemape click----
-  observeEvent(input$map_plot_click,{
+  observeEvent(input$map_plot_click, priority = 1, {
     sub_map_val$clck_pnt<-NULL
     proxy<-leafletProxy("map_plot")
     proxy %>%
@@ -383,7 +383,7 @@ server<-function(input,output,session){
   })
 
   #Delete Click ID on basemape click sub
-  observeEvent(input$map_plot_click,{
+  observeEvent(input$map_plot_click, priority = 1, {
     sub_map_val$clck_pnt<-NULL
     proxy<-leafletProxy("map_plot")
     proxy %>%
@@ -449,7 +449,7 @@ server<-function(input,output,session){
 
   })
   #Subwatershed Update 4: Clicked Subwaterhsed----
-  observeEvent(input$map_plot_shape_click,{
+  observeEvent(input$map_plot_shape_click, priority = 0, {
     click_sel<-as.vector(substring(sub_map_val$clck_pnt,5))
     if (!is.null(click_sel)){
       click_mask<-which(state_mapData$HUC12 %in% click_sel)
@@ -472,7 +472,7 @@ server<-function(input,output,session){
 
   #Every time someone clicks on a subwatershed in the main pane- add that HUC ID to the vector
   #Assign HUCid to reactive values on Map_click----
-  observeEvent(input$map_plot_shape_click,{
+  observeEvent(input$map_plot_shape_click, priority = 0, {
     get_huc_click<-sub_map_val$clck_pnt
     if (is.null(get_huc_click))return()
     #if (is.element(get_huc_click,no_catch_ids))return()#
@@ -514,7 +514,7 @@ server<-function(input,output,session){
   #
   observeEvent({input$tabs
     input$map_plot_shape_click
-  },{
+  }, priority = 0, {
     if (is.element(input$map_plot_shape_click$id,no_catch_ids))return()
     huc_id<-as.vector(latest_huc())
     gobbledeygook<-hucids[grep(huc_id,hucids)]
@@ -685,12 +685,12 @@ server<-function(input,output,session){
   y_var_c<-reactive({as.character(input$Y_axis_Category_c)})
 
   #Record Click ID
-  observeEvent(input$catch_map_shape_click,{
+  observeEvent(input$catch_map_shape_click, priority = 0, {
     target_huc_data$clck_pnt<-input$catch_map_shape_click$id
   })
 
   #Delete Click ID on basemape click
-  observeEvent(input$catch_map_click,{
+  observeEvent(input$catch_map_click, priority = 1, {
     target_huc_data$clck_pnt<-NULL
     proxy<-leafletProxy("catch_map")
     proxy %>%
@@ -773,7 +773,7 @@ server<-function(input,output,session){
 
   })
   #Catchment Map Update 4: Clicked Catchments----
-  observeEvent(input$catch_map_shape_click,{
+  observeEvent(input$catch_map_shape_click, priority = 0, {
     click_sel<-as.vector(target_huc_data$clck_pnt)
     if (!is.null(click_sel)){
       click_mask<-which(catchmentData$FEATUREID %in% click_sel)
